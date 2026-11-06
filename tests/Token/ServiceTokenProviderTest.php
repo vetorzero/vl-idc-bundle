@@ -84,6 +84,19 @@ class ServiceTokenProviderTest extends TestCase
     }
 
 
+    public function testForgetDiscardsOnlyThatToken(): void
+    {
+        $this->responses = [self::tokenResponse('tok-1'), self::tokenResponse('tok-pauta'), self::tokenResponse('tok-2')];
+
+        $this->provider->getToken();
+        $this->provider->getToken('pauta');
+        $this->provider->forget();
+
+        $this->assertSame('tok-2', $this->provider->getToken());
+        $this->assertSame('tok-pauta', $this->provider->getToken('pauta'));
+    }
+
+
     public function testReusesCachedTokenPerAudience(): void
     {
         $this->responses = [self::tokenResponse('tok-pauta'), self::tokenResponse('tok-outro')];

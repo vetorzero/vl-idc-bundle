@@ -61,6 +61,32 @@ class ApiClientTest extends TestCase
     }
 
 
+    public function testRetriesOnceWithFreshTokenOn401(): void
+    {
+        $tokens = $this->createMock(ServiceTokenProvider::class);
+        $tokens->method('getToken')->willReturn('tok-revogado', 'tok-novo');
+        $tokens->expects($this->once())->method('forget');
+        $client = new ApiClient(new MockHttpClient(fn() => array_shift($this->responses)), $tokens, 'https://central.test');
+        $this->responses = [self::problem(401, ['title' => 'Unauthorized']), $retry = new JsonMockResponse(self::USER)];
+
+        $this->assertSame('vlidc_usr_01', $client->getUser('vlidc_usr_01')->id);
+        $this->assertContains('Authorization: Bearer tok-novo', $retry->getRequestOptions()['headers']);
+    }
+
+
+    public function testGivesUpAfterSecond401(): void
+    {
+        $this->responses = [self::problem(401, []), self::problem(401, []), new JsonMockResponse(self::USER)];
+
+        try {
+            $this->client->getUser('vlidc_usr_01');
+            $this->fail('Expected an AccessDeniedException');
+        } catch (AccessDeniedException) {
+            $this->assertCount(1, $this->responses);
+        }
+    }
+
+
     public function testEncodesTheId(): void
     {
         $this->responses[] = $response = new JsonMockResponse(self::USER);
@@ -73,7 +99,6 @@ class ApiClientTest extends TestCase
 
     public static function problems(): iterable
     {
-        yield '401' => [401, [], AccessDeniedException::class];
         yield '403' => [403, [], AccessDeniedException::class];
         yield '404' => [404, [], NotFoundException::class];
         yield '409' => [409, [], ConflictException::class];

@@ -39,10 +39,7 @@ class ServiceTokenProvider
      */
     public function getToken(?string $audience = null): string
     {
-        // o client id pode ter caracteres que a chave de cache não aceita
-        $key = self::CACHE_KEY_PREFIX . hash('xxh128', $audience ?? '');
-
-        return $this->cache->get($key, function (ItemInterface $item) use ($audience): string {
+        return $this->cache->get($this->cacheKey($audience), function (ItemInterface $item) use ($audience): string {
             $data = $this->requestToken($audience);
 
             $token = $data['access_token'] ?? null;
@@ -55,6 +52,22 @@ class ServiceTokenProvider
 
             return $token;
         });
+    }
+
+
+    /**
+     * Descarta o token em cache, para quando o destino o recusou antes do prazo.
+     */
+    public function forget(?string $audience = null): void
+    {
+        $this->cache->delete($this->cacheKey($audience));
+    }
+
+
+    private function cacheKey(?string $audience): string
+    {
+        // o client id pode ter caracteres que a chave de cache não aceita
+        return self::CACHE_KEY_PREFIX . hash('xxh128', $audience ?? '');
     }
 
 

@@ -39,6 +39,8 @@ class ApiClient
 
 
     /**
+     * Com 401, tenta de novo uma vez com um token novo: o do cache pode ter sido revogado.
+     *
      * @return array<string, mixed>
      * @throws ApiException
      * @throws TokenException
@@ -48,10 +50,11 @@ class ApiClient
         $url = rtrim($this->issuer, '/') . '/api/v1' . $path;
 
         try {
-            $response = $this->httpClient->request($method, $url, [
-                'auth_bearer' => $this->tokenProvider->getToken(),
-                'headers' => ['Accept' => 'application/json'],
-            ]);
+            $response = $this->send($method, $url);
+            if ($response->getStatusCode() === 401) {
+                $this->tokenProvider->forget();
+                $response = $this->send($method, $url);
+            }
 
             $status = $response->getStatusCode();
             if ($status >= 400) {
@@ -68,6 +71,16 @@ class ApiClient
         } catch (ExceptionInterface $e) {
             throw ApiException::unreachable($method, $url, $e);
         }
+    }
+
+
+    /** @throws TokenException */
+    private function send(string $method, string $url): ResponseInterface
+    {
+        return $this->httpClient->request($method, $url, [
+            'auth_bearer' => $this->tokenProvider->getToken(),
+            'headers' => ['Accept' => 'application/json'],
+        ]);
     }
 
 
