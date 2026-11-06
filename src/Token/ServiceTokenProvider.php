@@ -34,13 +34,13 @@ class ServiceTokenProvider
 
 
     /**
-     * @param string $audience o client id do sistema destino
+     * @param ?string $audience o client id do sistema destino; null para a API da própria central
      * @throws TokenException quando a central recusa o pedido, não responde ou responde sem token
      */
-    public function getToken(string $audience): string
+    public function getToken(?string $audience = null): string
     {
         // o client id pode ter caracteres que a chave de cache não aceita
-        $key = self::CACHE_KEY_PREFIX . hash('xxh128', $audience);
+        $key = self::CACHE_KEY_PREFIX . hash('xxh128', $audience ?? '');
 
         return $this->cache->get($key, function (ItemInterface $item) use ($audience): string {
             $data = $this->requestToken($audience);
@@ -62,13 +62,18 @@ class ServiceTokenProvider
      * @return array<string, mixed>
      * @throws TokenException
      */
-    private function requestToken(string $audience): array
+    private function requestToken(?string $audience): array
     {
+        $body = ['grant_type' => 'client_credentials'];
+        if ($audience !== null) {
+            $body['audience'] = $audience;
+        }
+
         try {
             return $this->httpClient
                 ->request('POST', $this->discovery->get()->tokenEndpoint, [
                     'auth_basic' => [$this->clientId, $this->clientSecret],
-                    'body' => ['grant_type' => 'client_credentials', 'audience' => $audience],
+                    'body' => $body,
                 ])
                 ->toArray();
         } catch (HttpExceptionInterface $e) {

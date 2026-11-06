@@ -53,6 +53,37 @@ class ServiceTokenProviderTest extends TestCase
     }
 
 
+    public function testRequestsTokenForTheCentralApiWithoutAudience(): void
+    {
+        $this->responses[] = $response = self::tokenResponse('tok-api');
+
+        $this->assertSame('tok-api', $this->provider->getToken());
+
+        $this->assertSame('grant_type=client_credentials', $response->getRequestOptions()['body']);
+    }
+
+
+    public function testCachesTokenWithoutAudienceApartFromAudiences(): void
+    {
+        $this->responses = [self::tokenResponse('tok-api'), self::tokenResponse('tok-pauta')];
+
+        $this->assertSame('tok-api', $this->provider->getToken());
+        $this->assertSame('tok-pauta', $this->provider->getToken('pauta'));
+        $this->assertSame('tok-api', $this->provider->getToken());
+        $this->assertEmpty($this->responses);
+    }
+
+
+    public function testRefusalWithoutAudienceNamesTheCentralApi(): void
+    {
+        $this->responses[] = new JsonMockResponse(['error' => 'unauthorized_client'], ['http_code' => 400]);
+
+        $this->expectException(TokenException::class);
+        $this->expectExceptionMessage('refused a token for its own API (HTTP 400, unauthorized_client)');
+        $this->provider->getToken();
+    }
+
+
     public function testReusesCachedTokenPerAudience(): void
     {
         $this->responses = [self::tokenResponse('tok-pauta'), self::tokenResponse('tok-outro')];

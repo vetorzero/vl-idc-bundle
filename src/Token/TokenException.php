@@ -12,7 +12,7 @@ use Throwable;
 class TokenException extends \RuntimeException
 {
     public static function refused(
-        string $audience,
+        ?string $audience,
         int $status,
         ?string $error,
         ?string $description,
@@ -20,18 +20,24 @@ class TokenException extends \RuntimeException
     ): self {
         $reason = implode(': ', array_filter([$error, $description])) ?: 'no error given';
 
-        return new self("VL-IdC refused a token for audience '{$audience}' (HTTP {$status}, {$reason}).", previous: $previous);
+        return new self('VL-IdC refused a token for ' . self::target($audience) . " (HTTP {$status}, {$reason}).", previous: $previous);
     }
 
 
-    public static function unreachable(string $audience, Throwable $previous): self
+    public static function unreachable(?string $audience, Throwable $previous): self
     {
-        return new self("Could not get a token for audience '{$audience}' from VL-IdC: {$previous->getMessage()}", previous: $previous);
+        return new self('Could not get a token for ' . self::target($audience) . " from VL-IdC: {$previous->getMessage()}", previous: $previous);
     }
 
 
-    public static function invalidResponse(string $audience): self
+    public static function invalidResponse(?string $audience): self
     {
-        return new self("VL-IdC answered the token request for audience '{$audience}' without a usable token.");
+        return new self('VL-IdC answered the token request for ' . self::target($audience) . ' without a usable token.');
+    }
+
+
+    private static function target(?string $audience): string
+    {
+        return $audience === null ? 'its own API' : "audience '{$audience}'";
     }
 }
