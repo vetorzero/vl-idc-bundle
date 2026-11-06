@@ -5,6 +5,7 @@
     "license": "proprietary",
     "require": {
         "php": ">=8.4",
+        "firebase/php-jwt": "^7.2",
         "symfony/cache-contracts": "^3.6",
         "symfony/config": "^8.1",
         "symfony/dependency-injection": "^8.1",
