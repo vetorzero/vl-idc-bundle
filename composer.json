@@ -1,0 +1,17 @@
+{
+    "name": "vetorzero/vl-idc-bundle",
+    "description": "Integração com a Central de Identidade Vetor Zero (vl-idc).",
+    "type": "symfony-bundle",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.4",
+        "symfony/config": "^8.1",
+        "symfony/dependency-injection": "^8.1",
+        "symfony/http-kernel": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "VetorZero\\VlIdcBundle\\": "src/"
+        }
+    }
+}
