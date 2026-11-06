@@ -7,11 +7,15 @@
         "php": ">=8.4",
         "firebase/php-jwt": "^7.2",
         "league/oauth2-client": "^2.9",
+        "psr/log": "^3.0",
         "symfony/cache-contracts": "^3.6",
         "symfony/config": "^8.1",
         "symfony/dependency-injection": "^8.1",
+        "symfony/event-dispatcher-contracts": "^3.6",
         "symfony/http-client-contracts": "^3.6",
-        "symfony/http-kernel": "^8.1"
+        "symfony/http-foundation": "^8.1",
+        "symfony/http-kernel": "^8.1",
+        "symfony/routing": "^8.1"
     },
     "autoload": {
         "psr-4": {
