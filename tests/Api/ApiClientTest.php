@@ -24,6 +24,7 @@ class ApiClientTest extends TestCase
         'id' => 'vlidc_usr_01',
         'name' => 'Ada Lovelace',
         'email' => 'ada@example.com',
+        'picture' => 'https://lh3.googleusercontent.com/a/ada',
         'emails' => [],
         'active' => true,
     ];
@@ -58,6 +59,15 @@ class ApiClientTest extends TestCase
         $this->assertSame('vlidc_usr_01', $user->id);
         $this->assertSame('Ada Lovelace', $user->name);
         $this->assertSame('ada@example.com', $user->email);
+        $this->assertSame('https://lh3.googleusercontent.com/a/ada', $user->picture);
+    }
+
+
+    public function testUserWithoutPicture(): void
+    {
+        $this->responses[] = new JsonMockResponse(['picture' => null] + self::USER);
+
+        $this->assertNull($this->client->getUser('vlidc_usr_01')->picture);
     }
 
 

@@ -13,6 +13,8 @@ final readonly class User
         public string $id,
         public string $name,
         public string $email,
+        /** URL do avatar da conta Google principal */
+        public ?string $picture,
     ) {
     }
 
@@ -29,6 +31,11 @@ final readonly class User
             }
         }
 
-        return new self($data['id'], $data['name'], $data['email']);
+        $picture = $data['picture'] ?? null;
+        if ($picture !== null && !\is_string($picture)) {
+            throw new \UnexpectedValueException("The user's 'picture' is not a string.");
+        }
+
+        return new self($data['id'], $data['name'], $data['email'], $picture);
     }
 }
