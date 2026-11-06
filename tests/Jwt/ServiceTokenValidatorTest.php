@@ -49,11 +49,9 @@ class ServiceTokenValidatorTest extends TestCase
             return new JsonMockResponse(['keys' => [self::jwk($this->published)]]);
         });
         $cache = new ArrayAdapter();
+        $discovery = new Discovery($http, $cache, 'https://central.test');
 
-        $this->validator = new ServiceTokenValidator(
-            new KeySet($http, $cache, new Discovery($http, $cache, 'https://central.test')),
-            self::FERIAS,
-        );
+        $this->validator = new ServiceTokenValidator(new KeySet($http, $cache, $discovery), $discovery, self::FERIAS);
     }
 
 
@@ -112,6 +110,20 @@ class ServiceTokenValidatorTest extends TestCase
     }
 
 
+    public function testRejectsOtherIssuer(): void
+    {
+        $this->expectException(InvalidTokenException::class);
+        $this->validator->validate($this->token(['iss' => 'https://outra.test']));
+    }
+
+
+    public function testRejectsTokenWithoutIssuer(): void
+    {
+        $this->expectException(InvalidTokenException::class);
+        $this->validator->validate($this->token(['iss' => null]));
+    }
+
+
     public function testRejectsAudienceWithoutFerias(): void
     {
         $this->expectException(InvalidTokenException::class);
@@ -150,6 +162,7 @@ class ServiceTokenValidatorTest extends TestCase
     {
         $now = time();
         $claims += [
+            'iss' => 'https://central.test',
             'aud' => self::FERIAS,
             'client_id' => 'pauta',
             'sub' => 'pauta',
