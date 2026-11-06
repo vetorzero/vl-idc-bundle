@@ -5,8 +5,10 @@
     "license": "proprietary",
     "require": {
         "php": ">=8.4",
+        "symfony/cache-contracts": "^3.6",
         "symfony/config": "^8.1",
         "symfony/dependency-injection": "^8.1",
+        "symfony/http-client-contracts": "^3.6",
         "symfony/http-kernel": "^8.1"
     },
     "autoload": {

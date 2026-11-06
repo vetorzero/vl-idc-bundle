@@ -33,5 +33,7 @@ final class VlIdcBundle extends AbstractBundle
             ->set('vl_idc.issuer', $config['issuer'])
             ->set('vl_idc.client_id', $config['client_id'])
             ->set('vl_idc.client_secret', $config['client_secret']);
+
+        $container->import('../config/services.php');
     }
 }
