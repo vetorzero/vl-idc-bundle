@@ -38,10 +38,10 @@ class KeySet
      * @throws InvalidTokenException
      * @throws ExceptionInterface quando a central não pôde ser consultada
      */
-    public function decode(string $jwt, ?\stdClass &$headers = null): \stdClass
+    public function decode(string $jwt): DecodedJwt
     {
         try {
-            return $this->decodeWith($jwt, $this->key(), $headers);
+            return $this->decodeWith($jwt, $this->key());
         } catch (InvalidTokenException $e) {
             if (!$e->getPrevious() instanceof SignatureInvalidException) {
                 throw $e;
@@ -50,19 +50,23 @@ class KeySet
 
         $this->cache->delete(self::CACHE_KEY);
 
-        return $this->decodeWith($jwt, $this->key(), $headers);
+        return $this->decodeWith($jwt, $this->key());
     }
 
 
-    private function decodeWith(string $jwt, Key $key, ?\stdClass &$headers): \stdClass
+    private function decodeWith(string $jwt, Key $key): DecodedJwt
     {
         JWT::$leeway = self::LEEWAY;
+        // a lib devolve o header por referência, e só quando recebe um objeto
+        $header = new \stdClass();
 
         try {
-            return JWT::decode($jwt, $key, $headers);
+            $claims = JWT::decode($jwt, $key, $header);
         } catch (\UnexpectedValueException|\DomainException|\InvalidArgumentException $e) {
             throw new InvalidTokenException($e->getMessage(), previous: $e);
         }
+
+        return new DecodedJwt($header, $claims);
     }
 
 

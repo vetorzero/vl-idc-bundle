@@ -9,6 +9,7 @@ use VetorZero\VlIdcBundle\Discovery\Discovery;
 use VetorZero\VlIdcBundle\Jwt\KeySet;
 use VetorZero\VlIdcBundle\Jwt\ServiceTokenValidator;
 use VetorZero\VlIdcBundle\Token\ServiceTokenProvider;
+use VetorZero\VlIdcBundle\Webhook\SecurityEventVerifier;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services()
@@ -23,4 +24,5 @@ return static function (ContainerConfigurator $container): void {
     $services->set(ServiceTokenValidator::class);
     $services->set(ServiceTokenProvider::class);
     $services->set(ApiClient::class);
+    $services->set(SecurityEventVerifier::class);
 };

@@ -27,7 +27,7 @@ class ServiceTokenValidator
      */
     public function validate(string $jwt): string
     {
-        $claims = $this->keySet->decode($jwt);
+        $claims = $this->keySet->decode($jwt)->claims;
 
         if (($claims->iss ?? null) !== $this->discovery->get()->issuer) {
             throw new InvalidTokenException('Token was not issued by the central');
