@@ -9,6 +9,7 @@ use VetorZero\VlIdcBundle\Discovery\Discovery;
 use VetorZero\VlIdcBundle\Jwt\IdTokenVerifier;
 use VetorZero\VlIdcBundle\Jwt\KeySet;
 use VetorZero\VlIdcBundle\Jwt\ServiceTokenValidator;
+use VetorZero\VlIdcBundle\Logout\BackchannelLogoutController;
 use VetorZero\VlIdcBundle\Logout\LogoutTokenVerifier;
 use VetorZero\VlIdcBundle\Token\ServiceTokenProvider;
 use VetorZero\VlIdcBundle\Webhook\SecurityEventVerifier;
@@ -31,6 +32,9 @@ return static function (ContainerConfigurator $container): void {
     $services->set(SecurityEventVerifier::class);
     $services->set(LogoutTokenVerifier::class);
     $services->set(WebhookController::class)
+        ->public()
+        ->tag('controller.service_arguments');
+    $services->set(BackchannelLogoutController::class)
         ->public()
         ->tag('controller.service_arguments');
 };
