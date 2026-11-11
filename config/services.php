@@ -6,6 +6,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use VetorZero\VlIdcBundle\Api\ApiClient;
 use VetorZero\VlIdcBundle\Discovery\Discovery;
+use VetorZero\VlIdcBundle\Jwt\IdTokenVerifier;
 use VetorZero\VlIdcBundle\Jwt\KeySet;
 use VetorZero\VlIdcBundle\Jwt\ServiceTokenValidator;
 use VetorZero\VlIdcBundle\Token\ServiceTokenProvider;
@@ -22,6 +23,7 @@ return static function (ContainerConfigurator $container): void {
 
     $services->set(Discovery::class);
     $services->set(KeySet::class);
+    $services->set(IdTokenVerifier::class);
     $services->set(ServiceTokenValidator::class);
     $services->set(ServiceTokenProvider::class);
     $services->set(ApiClient::class);
