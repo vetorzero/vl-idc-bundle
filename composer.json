@@ -17,9 +17,23 @@
         "symfony/http-kernel": "^7.4 || ^8.1",
         "symfony/routing": "^7.4 || ^8.1"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^12.5.42",
+        "symfony/cache": "^7.4 || ^8.1",
+        "symfony/event-dispatcher": "^7.4 || ^8.1",
+        "symfony/http-client": "^7.4 || ^8.1"
+    },
     "autoload": {
         "psr-4": {
             "VetorZero\\VlIdcBundle\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "VetorZero\\VlIdcBundle\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
     }
 }
