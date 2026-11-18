@@ -1,0 +1,46 @@
+name: tests
+
+on:
+    push:
+    pull_request:
+
+jobs:
+    phpunit:
+        name: php ${{ matrix.php }}, symfony ${{ matrix.symfony }}
+        runs-on: ubuntu-latest
+
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    # o mínimo suportado: o que um projeto em LTS instala
+                    - php: '8.4'
+                      symfony: '7.4.*'
+                    # o mais recente
+                    - php: '8.5'
+                      symfony: '8.1.*'
+                    # o piso de todas as restrições do composer.json
+                    - php: '8.4'
+                      symfony: lowest
+
+        steps:
+            - uses: actions/checkout@v5
+
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php }}
+                  coverage: none
+                  tools: flex
+
+            - name: install dependencies
+              env:
+                  SYMFONY_REQUIRE: ${{ matrix.symfony != 'lowest' && matrix.symfony || '' }}
+              run: |
+                  if [ "${{ matrix.symfony }}" = lowest ]; then
+                      composer update --no-interaction --no-progress --prefer-lowest
+                  else
+                      composer update --no-interaction --no-progress
+                  fi
+                  composer show | grep -E '^(symfony/http-kernel|phpunit/phpunit) '
+
+            - run: vendor/bin/phpunit
