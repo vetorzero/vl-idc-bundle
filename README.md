@@ -13,7 +13,7 @@ Requer PHP 8.4+ e Symfony 7.4 ou 8.1+.
 
 ## Instalação
 
-O pacote é privado e não está no Packagist. Adicione o repositório ao `composer.json` do projeto:
+O pacote não está no Packagist. Adicione o repositório ao `composer.json` do projeto:
 
 ```json
 "repositories": [
@@ -23,14 +23,6 @@ O pacote é privado e não está no Packagist. Adicione o repositório ao `compo
 
 ```sh
 composer require vetorzero/vl-idc-bundle
-```
-
-Para baixar, o Composer precisa de um token do GitHub com acesso de leitura ao repositório. Em
-máquinas de dev, `composer config --global github-oauth.github.com <token>`. Em Docker e CI, passe
-pela variável `COMPOSER_AUTH`:
-
-```sh
-COMPOSER_AUTH='{"github-oauth": {"github.com": "<token>"}}'
 ```
 
 Registre o bundle, se o Flex não fizer isso sozinho:
@@ -186,3 +178,8 @@ A CI roda a suíte com PHP 8.4 + Symfony 7.4, PHP 8.5 + Symfony 8.1 e com as ver
 aceitas pelo `composer.json`.
 
 Versões seguem [semver](https://semver.org/lang/pt-BR/) e saem como tags (`v1.2.3`).
+
+
+## Licença
+
+[MIT](LICENSE).

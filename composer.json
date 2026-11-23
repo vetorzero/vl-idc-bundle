@@ -2,7 +2,7 @@
     "name": "vetorzero/vl-idc-bundle",
     "description": "Integração com a Central de Identidade Vetor Zero (vl-idc).",
     "type": "symfony-bundle",
-    "license": "proprietary",
+    "license": "MIT",
     "require": {
         "php": ">=8.4",
         "firebase/php-jwt": "^7.2",
